@@ -39,9 +39,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-            padding-bottom: 16px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .icon {
@@ -73,15 +71,61 @@
             margin-top: 3px;
         }
 
+        /* Навигация по вкладкам */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            padding-bottom: 10px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .tab-btn.active {
+            color: #ffd700;
+            background: rgba(255, 215, 0, 0.12);
+        }
+
+        /* Содержимое вкладок */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.25s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .description {
             font-size: 13.5px;
             line-height: 1.55;
             color: #ddd;
-            margin-bottom: 22px;
+            margin-bottom: 20px;
         }
 
         .section-title {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             color: #ffd700;
             text-transform: uppercase;
@@ -89,7 +133,7 @@
             margin-bottom: 10px;
         }
 
-        /* Демонстрация плашек */
+        /* Превью плашек */
         .preview-box {
             display: flex;
             justify-content: space-around;
@@ -97,7 +141,7 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 10px;
             padding: 14px;
-            margin-bottom: 22px;
+            margin-bottom: 20px;
         }
 
         .badge-demo {
@@ -144,10 +188,10 @@
             border-color: #550000;
         }
 
-        /* Список фич */
+        /* Списки */
         .features-list {
             list-style: none;
-            margin-bottom: 24px;
+            margin-bottom: 22px;
         }
 
         .features-list li {
@@ -203,6 +247,7 @@
 <body>
 
     <div class="card">
+        <!-- Шапка -->
         <div class="header">
             <div class="icon">
                 <svg viewBox="0 0 24 24" fill="currentColor">
@@ -215,44 +260,88 @@
             </div>
         </div>
 
-        <div class="description">
-            Мод для боережима <b>CatWar (cw3)</b>. Отображает текущие проценты энергии игроков по центру клетки и позволяет настроить визуал под себя.
+        <!-- Кнопки вкладок (страниц) -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="openTab('tab-main', this)">Главная</button>
+            <button class="tab-btn" onclick="openTab('tab-guide', this)">Установка</button>
+            <button class="tab-btn" onclick="openTab('tab-changelog', this)">Обновления</button>
         </div>
 
-        <div class="section-title">Индикация свечением</div>
-        <div class="preview-box">
-            <div class="badge-demo">
-                <div class="badge green">100%</div>
-                <span>100–50%</span>
+        <!-- Вкладка 1: Главная -->
+        <div id="tab-main" class="tab-content active">
+            <div class="description">
+                Мод для боережима <b>CatWar (cw3)</b>. Отображает проценты энергии игроков по центру клетки и позволяет гибко настроить оформление прямо в игре.
             </div>
-            <div class="badge-demo">
-                <div class="badge orange">45%</div>
-                <span>49–20%</span>
+
+            <div class="section-title">Индикация уровня энергии</div>
+            <div class="preview-box">
+                <div class="badge-demo">
+                    <div class="badge green">100%</div>
+                    <span>100–50%</span>
+                </div>
+                <div class="badge-demo">
+                    <div class="badge orange">45%</div>
+                    <span>49–20%</span>
+                </div>
+                <div class="badge-demo">
+                    <div class="badge red">15%</div>
+                    <span>&lt; 20%</span>
+                </div>
+                <div class="badge-demo">
+                    <div class="badge zero">0%</div>
+                    <span>0% (крит)</span>
+                </div>
             </div>
-            <div class="badge-demo">
-                <div class="badge red">15%</div>
-                <span>&lt; 20%</span>
-            </div>
-            <div class="badge-demo">
-                <div class="badge zero">0%</div>
-                <span>0% (крит)</span>
-            </div>
+
+            <div class="section-title">Возможности</div>
+            <ul class="features-list">
+                <li><b>Плавающее меню:</b> перемещается мышкой в любое удобное место.</li>
+                <li><b>Индикация свечением:</b> цветной контур сигнализирует об остатке сил.</li>
+                <li><b>Свои цвета:</b> выбор любого цвета фона и шрифта через палитру или HEX.</li>
+                <li><b>Оптимизация:</b> строгое ограничение полем 10×6, отсутствие лагов.</li>
+            </ul>
+
+            <a href="energy-mod.user.js" class="install-btn">Установить скрипт</a>
         </div>
 
-        <div class="section-title">Возможности</div>
-        <ul class="features-list">
-            <li><b>Плавающая кнопка:</b> перетаскивается мышкой в любую точку экрана.</li>
-            <li><b>Темы оформления:</b> светлая, темная или свои цвета через палитру и HEX-коды.</li>
-            <li><b>Оптимизация:</b> строгое ограничение полем 10×6, 0% задержек и лагов.</li>
-        </ul>
+        <!-- Вкладка 2: Инструкция -->
+        <div id="tab-guide" class="tab-content">
+            <div class="section-title">Инструкция по установке</div>
+            <ul class="features-list">
+                <li>Установите расширение <b>Tampermonkey</b> или <b>Violentmonkey</b> для вашего браузера.</li>
+                <li>Перейдите на вкладку <b>«Главная»</b> и нажмите зеленую кнопку <b>«Установить скрипт»</b>.</li>
+                <li>В открывшейся вкладке расширения нажмите кнопку <b>«Установить»</b> (Install).</li>
+                <li>Откройте боережим CatWar (<code>/cw3</code>) — вверху появится круглая кнопка с молнией.</li>
+                <li>Зажмите молнию мышкой, чтобы переместить в удобное место, или кликните по ней для открытия настроек.</li>
+            </ul>
+        </div>
 
-        <!-- Ссылка на скрипт -->
-        <a href="energy-mod.user.js" class="install-btn">Установить скрипт</a>
+        <!-- Вкладка 3: Обновления -->
+        <div id="tab-changelog" class="tab-content">
+            <div class="section-title">История версий</div>
+            <ul class="features-list">
+                <li><b>v5.7:</b> Окно «подробнее», гарантированный красный цвет при 0% энергии.</li>
+                <li><b>v5.6:</b> Цветовая индикация свечением (зеленое, оранжевое, красное) и блок кастомных цветов.</li>
+                <li><b>v5.5:</b> Замена ползунков на удобные галочки (чекбоксы).</li>
+                <li><b>v5.3:</b> Жесткое ограничение сеткой 10×6 (60 клеток), защита от зависаний.</li>
+                <li><b>v5.0:</b> Перенос настроек в cw3 с плавающей иконкой и размытием.</li>
+            </ul>
+        </div>
 
         <div class="footer">
-            Для работы требуется расширение Tampermonkey или Violentmonkey • мяу
+            Для работы требуется Tampermonkey / Violentmonkey • мяу
         </div>
     </div>
 
+    <!-- Скрипт мгновенного переключения вкладок -->
+    <script>
+        function openTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            btn.classList.add('active');
+        }
+    </script>
 </body>
 </html>
