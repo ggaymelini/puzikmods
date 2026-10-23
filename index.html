@@ -3,344 +3,452 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Energy mod — CatWar</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%23ffd700%22><path d=%22M11 21h-1l1-7H7.5c-.58 0-.57-.32-.38-.66.19-.34.05-.08.07-.12C8.48 10.94 10.42 7.54 13 3h1l-1 7h3.5c.49 0 .56.33.47.51l-.07.15C12.96 17.55 11 21 11 21z%22/></svg>">
+    <title>Самоучитель по активным боям — КПВ</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
         }
 
+        /* Фоновый темный оливковый цвет как на скриншотах */
         body {
-            background: radial-gradient(circle at top, #232820 0%, #11130f 100%);
-            color: #ececec;
+            background-color: #3f471f;
+            color: #1a1a1a;
             min-height: 100vh;
+            padding: 24px 16px;
             display: flex;
-            align-items: center;
             justify-content: center;
-            padding: 20px;
         }
 
-        .card {
-            background: rgba(35, 38, 28, 0.72);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.16);
-            border-radius: 16px;
-            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
-            max-width: 520px;
+        /* Главная сетка: Сайдбар + Материал */
+        .course-container {
+            display: grid;
+            grid-template-columns: 270px 1fr;
+            gap: 20px;
+            max-width: 1080px;
             width: 100%;
-            padding: 28px;
+            align-items: start;
         }
 
-        .header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 16px;
+        @media (max-width: 860px) {
+            .course-container {
+                grid-template-columns: 1fr;
+            }
         }
 
-        .icon {
-            width: 42px;
-            height: 42px;
-            background: rgba(255, 220, 50, 0.15);
-            border: 1px solid rgba(255, 220, 50, 0.4);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #ffd700;
+        /* Сайдбар слева */
+        .sidebar {
+            background: rgba(30, 36, 14, 0.75);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 2px dashed #6f7c35;
+            border-radius: 10px;
+            padding: 16px;
+            position: sticky;
+            top: 20px;
+            color: #f0f0f0;
         }
 
-        .icon svg {
-            width: 22px;
-            height: 22px;
-        }
-
-        .title-block h1 {
-            font-size: 20px;
-            color: #fff;
-            letter-spacing: 0.4px;
-        }
-
-        .title-block p {
-            font-size: 12px;
-            color: #aaa;
-            margin-top: 3px;
-        }
-
-        /* Навигация по вкладкам */
-        .tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-            padding-bottom: 10px;
-        }
-
-        .tab-btn {
-            background: none;
-            border: none;
-            color: #888;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            padding: 6px 12px;
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
-
-        .tab-btn:hover {
-            color: #fff;
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        .tab-btn.active {
-            color: #ffd700;
-            background: rgba(255, 215, 0, 0.12);
-        }
-
-        /* Содержимое вкладок */
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.25s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(4px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .description {
-            font-size: 13.5px;
-            line-height: 1.55;
-            color: #ddd;
-            margin-bottom: 20px;
-        }
-
-        .section-title {
-            font-size: 12px;
-            font-weight: 600;
-            color: #ffd700;
+        .sidebar h3 {
+            font-size: 15px;
+            color: #ebd997;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
+            padding-bottom: 8px;
         }
 
-        /* Превью плашек */
-        .preview-box {
-            display: flex;
-            justify-content: space-around;
-            background: rgba(0, 0, 0, 0.35);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 10px;
-            padding: 14px;
-            margin-bottom: 20px;
-        }
-
-        .badge-demo {
+        .topic-nav {
+            list-style: none;
             display: flex;
             flex-direction: column;
-            align-items: center;
             gap: 6px;
         }
 
-        .badge-demo span {
-            font-size: 11px;
-            color: #888;
-        }
-
-        .badge {
-            background: rgba(25, 25, 25, 0.95);
-            color: #fff;
-            font-size: 11px;
-            font-weight: bold;
-            padding: 2px 7px;
-            border-radius: 4px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+        .nav-item {
+            padding: 9px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #d1d8aa;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
             user-select: none;
         }
 
-        .badge.green {
-            box-shadow: 0 0 6px 1.5px rgba(76, 175, 80, 0.9);
-            border-color: #4CAF50;
-        }
-
-        .badge.orange {
-            box-shadow: 0 0 6px 1.5px rgba(255, 179, 0, 0.9);
-            border-color: #FFB300;
-        }
-
-        .badge.red {
-            box-shadow: 0 0 8px 2px rgba(244, 67, 54, 0.95);
-            border-color: #F44336;
-        }
-
-        .badge.zero {
-            background: #ad001b;
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.08);
             color: #fff;
-            border-color: #550000;
         }
 
-        /* Списки */
-        .features-list {
-            list-style: none;
-            margin-bottom: 22px;
+        .nav-item.active {
+            background: #ebd997;
+            color: #1a1a1a;
+            font-weight: bold;
+            border-color: #baa457;
         }
 
-        .features-list li {
-            font-size: 13px;
-            line-height: 1.5;
-            margin-bottom: 8px;
-            color: #ccc;
-            padding-left: 18px;
+        /* Основная область статьи */
+        .content-card {
+            background: #39401b;
+            border: 2px solid #58632a;
+            padding: 14px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border-radius: 4px;
+        }
+
+        /* Верхний декоративный баннер */
+        .header-banner {
+            width: 100%;
+            height: 120px;
+            border: 2px dashed #7a863d;
+            background: #f1ebd7 url('https://images.unsplash.com/photo-1596386461350-326ccb383e9f?auto=format&fit=crop&w=1000&q=80') center/cover no-repeat;
+            border-radius: 4px;
+            margin-bottom: 12px;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.25);
             position: relative;
         }
 
-        .features-list li::before {
-            content: "•";
-            color: #ffd700;
-            position: absolute;
-            left: 4px;
-            font-size: 16px;
+        /* Блок 1: Главный заголовок */
+        .title-box {
+            background-color: #ebd997;
+            border: 2px dashed #998a4a;
+            text-align: center;
+            padding: 14px 10px;
+            margin-bottom: 2px;
         }
 
-        /* Кнопка установки */
-        .install-btn {
-            display: block;
-            width: 100%;
-            text-align: center;
-            background: #4CAF50;
-            color: #fff;
-            font-weight: 600;
+        .title-box h1 {
+            font-size: 21px;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 4px;
+        }
+
+        .title-box p {
             font-size: 14px;
-            padding: 12px 20px;
-            border-radius: 8px;
-            text-decoration: none;
-            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.35);
-            transition: background 0.2s, transform 0.1s;
+            color: #79713e;
+            font-style: normal;
         }
 
-        .install-btn:hover {
-            background: #43a047;
-            transform: translateY(-1px);
-        }
-
-        .install-btn:active {
-            transform: translateY(0);
-        }
-
-        .footer {
-            margin-top: 14px;
+        /* Блок 2: Информация об авторстве */
+        .credits-box {
+            background-color: #d8b7d8;
+            padding: 8px 14px;
+            font-size: 13px;
+            color: #111;
             text-align: center;
+            line-height: 1.4;
+            font-style: italic;
+        }
+
+        /* Блок 3: Дата */
+        .date-box {
+            background-color: #855b80;
+            border-bottom: 2px dashed #593554;
+            padding: 6px;
+            text-align: center;
+            font-size: 12px;
+            color: #fff;
+            margin-bottom: 14px;
+        }
+
+        .date-box span {
+            text-decoration: underline;
+        }
+
+        /* Заголовок текущей главы */
+        .chapter-header {
+            margin-bottom: 14px;
+        }
+
+        .chapter-title {
+            background-color: #ebd997;
+            border: 2px dashed #998a4a;
+            border-bottom: none;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 10px;
+            color: #000;
+        }
+
+        .chapter-desc {
+            background-color: #c7d18c;
+            border: 2px dashed #998a4a;
+            text-align: center;
+            font-size: 14px;
+            padding: 8px;
+            color: #1a1a1a;
+        }
+
+        /* Интерактивные спойлеры (детали) */
+        .spoiler-box {
+            margin-bottom: 14px;
+            border: 2px dashed #828e40;
+            background-color: #f4ecd1;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        /* Шапка спойлера */
+        .spoiler-header {
+            background-color: #a3ad52;
+            padding: 9px 14px;
+            font-size: 15px;
+            font-weight: bold;
+            color: #000;
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            list-style: none; /* Убирает стандартный треугольник details */
+            border-bottom: 1px dashed #7a8435;
+        }
+
+        .spoiler-header::-webkit-details-marker {
+            display: none;
+        }
+
+        .spoiler-header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .spoiler-arrow {
+            font-size: 10px;
+            background: rgba(255,255,255,0.4);
+            border: 1px solid rgba(0,0,0,0.2);
+            padding: 2px 5px;
+            border-radius: 2px;
+            transition: transform 0.2s;
+        }
+
+        details[open] .spoiler-arrow {
+            transform: rotate(180deg);
+        }
+
+        /* Тело спойлера с текстом */
+        .spoiler-body {
+            padding: 16px 20px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #111;
+        }
+
+        .spoiler-body p {
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+
+        .spoiler-body p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Выделенные цитаты / ключевые мысли */
+        .quote-card {
+            background: #ebd997;
+            border-left: 4px solid #855b80;
+            padding: 10px 14px;
+            margin: 14px 0;
+            font-size: 13.5px;
+            border-radius: 0 4px 4px 0;
+            font-style: italic;
+        }
+
+        .qa-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #3f471f;
+            margin-top: 14px;
+            margin-bottom: 6px;
+        }
+
+        /* Блок перехода к следующему разделу внизу */
+        .next-footer {
+            margin-top: 24px;
+            background-color: #2b3014;
+            border: 2px dashed #646e30;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            border-radius: 4px;
+        }
+
+        .next-text {
+            color: #fff;
+        }
+
+        .next-text span {
+            display: block;
             font-size: 11px;
-            color: #777;
+            color: #a7b275;
+            text-transform: uppercase;
+        }
+
+        .next-text strong {
+            font-size: 14px;
+            color: #ebd997;
+        }
+
+        .next-btn {
+            background-color: #855b80;
+            color: #fff;
+            border: 1px solid #482844;
+            padding: 10px 22px;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+        }
+
+        .next-btn:hover {
+            background-color: #9d6f97;
+            transform: translateY(-1px);
         }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <!-- Шапка -->
-        <div class="header">
-            <div class="icon">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M11 21h-1l1-7H7.5c-.58 0-.57-.32-.38-.66.19-.34.05-.08.07-.12C8.48 10.94 10.42 7.54 13 3h1l-1 7h3.5c.49 0 .56.33.47.51l-.07.15C12.96 17.55 11 21 11 21z"/>
-                </svg>
-            </div>
-            <div class="title-block">
-                <h1>Energy mod</h1>
-                <p>Автор: Пухляш</p>
-            </div>
-        </div>
-
-        <!-- Кнопки вкладок (страниц) -->
-        <div class="tabs">
-            <button class="tab-btn active" onclick="openTab('tab-main', this)">Главная</button>
-            <button class="tab-btn" onclick="openTab('tab-guide', this)">Установка</button>
-            <button class="tab-btn" onclick="openTab('tab-changelog', this)">Обновления</button>
-        </div>
-
-        <!-- Вкладка 1: Главная -->
-        <div id="tab-main" class="tab-content active">
-            <div class="description">
-                Мод для боережима <b>CatWar (cw3)</b>. Отображает проценты энергии игроков по центру клетки и позволяет гибко настроить оформление прямо в игре.
-            </div>
-
-            <div class="section-title">Индикация уровня энергии</div>
-            <div class="preview-box">
-                <div class="badge-demo">
-                    <div class="badge green">100%</div>
-                    <span>100–50%</span>
-                </div>
-                <div class="badge-demo">
-                    <div class="badge orange">45%</div>
-                    <span>49–20%</span>
-                </div>
-                <div class="badge-demo">
-                    <div class="badge red">15%</div>
-                    <span>&lt; 20%</span>
-                </div>
-                <div class="badge-demo">
-                    <div class="badge zero">0%</div>
-                    <span>0% (крит)</span>
-                </div>
-            </div>
-
-            <div class="section-title">Возможности</div>
-            <ul class="features-list">
-                <li><b>Плавающее меню:</b> перемещается мышкой в любое удобное место.</li>
-                <li><b>Индикация свечением:</b> цветной контур сигнализирует об остатке сил.</li>
-                <li><b>Свои цвета:</b> выбор любого цвета фона и шрифта через палитру или HEX.</li>
-                <li><b>Оптимизация:</b> строгое ограничение полем 10×6, отсутствие лагов.</li>
+    <div class="course-container">
+        
+        <!-- Сайдбар с темами слева -->
+        <aside class="sidebar">
+            <h3>Содержание</h3>
+            <ul class="topic-nav">
+                <li class="nav-item active" onclick="switchChapter(1)">Глава I: Введение</li>
+                <li class="nav-item" onclick="switchChapter(2)">Глава II: Управление и клавиши</li>
+                <li class="nav-item" onclick="switchChapter(3)">Глава III: Основы бега и маневров</li>
+                <li class="nav-item" onclick="switchChapter(4)">Глава IV: Работа со стрелой</li>
+                <li class="nav-item" onclick="switchChapter(5)">Глава V: Тактика и спарринги</li>
             </ul>
+        </aside>
 
-            <a href="energy-mod.user.js" class="install-btn">Установить скрипт</a>
-        </div>
+        <!-- Главное поле статьи -->
+        <main class="content-card">
+            
+            <!-- Декоративный баннер -->
+            <div class="header-banner"></div>
 
-        <!-- Вкладка 2: Инструкция -->
-        <div id="tab-guide" class="tab-content">
-            <div class="section-title">Инструкция по установке</div>
-            <ul class="features-list">
-                <li>Установите расширение <b>Tampermonkey</b> или <b>Violentmonkey</b> для вашего браузера.</li>
-                <li>Перейдите на вкладку <b>«Главная»</b> и нажмите зеленую кнопку <b>«Установить скрипт»</b>.</li>
-                <li>В открывшейся вкладке расширения нажмите кнопку <b>«Установить»</b> (Install).</li>
-                <li>Откройте боережим CatWar (<code>/cw3</code>) — вверху появится круглая кнопка с молнией.</li>
-                <li>Зажмите молнию мышкой, чтобы переместить в удобное место, или кликните по ней для открытия настроек.</li>
-            </ul>
-        </div>
+            <!-- Главный заголовок документа -->
+            <div class="title-box">
+                <h1>Самоучитель по активным боям</h1>
+                <p>или как научиться жать нужные кнопки</p>
+            </div>
 
-        <!-- Вкладка 3: Обновления -->
-        <div id="tab-changelog" class="tab-content">
-            <div class="section-title">История версий</div>
-            <ul class="features-list">
-                <li><b>v5.7:</b> Окно «подробнее», гарантированный красный цвет при 0% энергии.</li>
-                <li><b>v5.6:</b> Цветовая индикация свечением (зеленое, оранжевое, красное) и блок кастомных цветов.</li>
-                <li><b>v5.5:</b> Замена ползунков на удобные галочки (чекбоксы).</li>
-                <li><b>v5.3:</b> Жесткое ограничение сеткой 10×6 (60 клеток), защита от зависаний.</li>
-                <li><b>v5.0:</b> Перенос настроек в cw3 с плавающей иконкой и размытием.</li>
-            </ul>
-        </div>
+            <!-- Блок об авторе и назначении -->
+            <div class="credits-box">
+                Документ составлен <b>Блестяшкой [1667923]</b>, принадлежит <b>КПВ</b> и предназначен для обучения преимущественно <b>Подготовительной группы отряда Бойцов</b>
+            </div>
 
-        <div class="footer">
-            Для работы требуется Tampermonkey / Violentmonkey • мяу
-        </div>
+            <!-- Дата обновления -->
+            <div class="date-box">
+                Дата последнего обновления документа: <span>05.07.2026</span>
+            </div>
+
+            <!-- Заголовок главы I -->
+            <div class="chapter-header">
+                <div class="chapter-title">Глава I: введение</div>
+                <div class="chapter-desc">О документе, о Подготовительной группе, о психологии</div>
+            </div>
+
+            <!-- Спойлер 1: О документе -->
+            <details class="spoiler-box" open>
+                <summary class="spoiler-header">
+                    <div class="spoiler-header-left">
+                        <span>🍇</span>
+                        <span>О документе</span>
+                    </div>
+                    <span class="spoiler-arrow">▼</span>
+                </summary>
+                <div class="spoiler-body">
+                    <p>Привет, ученик!</p>
+                    <p>Задача данного документа, Самоучителя, — помочь тебе погрузиться в основы активного боя через самостоятельное изучение представленных учебных материалов. Самоучитель разделен на несколько глав, каждая из которых включает в себя теорию и упражнения с наглядным визуальным пояснением в виде GIF-картинок и видеофайлов.</p>
+                    <p>Важно уточнить, что изучение Самоучителя не отменяет необходимости заниматься с наставниками, если ты только начинаешь свой путь в боях. Материал здесь лишь поможет тебе приобрести начальные теоретические знания и мышечно запомнить клавиатуру — учиться применять указанное в любом случае необходимо с наставником или товарищами по группе.</p>
+                </div>
+            </details>
+
+            <!-- Спойлер 2: О Подготовительной группе -->
+            <details class="spoiler-box" open>
+                <summary class="spoiler-header">
+                    <div class="spoiler-header-left">
+                        <span>🍇</span>
+                        <span>О Подготовительной группе</span>
+                    </div>
+                    <span class="spoiler-arrow">▼</span>
+                </summary>
+                <div class="spoiler-body">
+                    <p>В Подготовительной группе (далее — <b>ПДГТВ</b>) собраны игроки, только начинающие знакомиться с основами активного боя. Помимо них тебе также могут встретиться более опытные люди, ранее являвшиеся бойцами и оставившие это дело или вернувшиеся в клан после отсутствия. Тем не менее, основной костяк ПДГТВ — новички.</p>
+                    <p>Следующей группой внутри ПДГТВ являются <b>наставники</b> — бойцы из рангов выше (от Младшей группы), призванные помогать тебе и твоим сокурсникам идти по тропинке обучения.</p>
+                </div>
+            </details>
+
+            <!-- Спойлер 3: О психологии -->
+            <details class="spoiler-box" open>
+                <summary class="spoiler-header">
+                    <div class="spoiler-header-left">
+                        <span>🍇</span>
+                        <span>О психологии</span>
+                    </div>
+                    <span class="spoiler-arrow">▼</span>
+                </summary>
+                <div class="spoiler-body">
+                    <p><i>Этот раздел необязателен к изучению, и ты в любой момент можешь вернуться к нему, если почувствуешь такую необходимость.</i></p>
+                    <p>Каждый боец начинает свой путь по-разному, но большинство новичков бывают скованы одной вещью, которая объединяет их всех — <b>психологическое давление</b>. Оно может выражаться совершенно по-разному в форме страха, тревоги, неуверенности в себе, и напрямую влияет не только на результат твоего обучения, но и на твое моральное состояние.</p>
+
+                    <div class="quote-card">
+                        «Самое главное, что необходимо усвоить и помнить — без практики не будет прогресса. Без совершения усилий для преодоления трудностей обучение и дальнейшее развитие может даваться тебе с большим трудом. Всегда будут бойцы сильнее тебя. Твоя задача — учиться у них.»
+                    </div>
+
+                    <p>Чаще всего встречается <b>неуверенность в себе</b> и собственных силах — распространённая проблема среди новичков, которые ещё не знают, как им справляться со многими ситуациями в бою. Чуть реже можно встретить <b>тревогу</b> — ощущение, что в процессе обязательно что-то пойдет не так, что ты не справишься, от чего нередко дрожат и потеют руки. Еще реже — <b>страх</b>, в основном появляющийся перед стычками с сильными противниками, при посещении массовых боевых мероприятий.</p>
+
+                    <div class="qa-title">Как бороться со всем этим ужасом?</div>
+                    <p><b>Во-первых, найди себе группу поддержки.</b> Присмотрись к людям, которые обучаются с тобой в одной группе — наверняка вокруг есть такие же новички, как и ты сам. Попробуй наладить контакт с себе подобным, предложи ему тренироваться вместе. Если никто не цепляет твой взгляд или тебе некомфортно среди сокурсников, попробуй обратиться к бойцам-наставникам, необязательно именно твоей группы. Многие в составе учителей могут оказать тебе помощь не только в развитии навыков, но и психологическую поддержку.</p>
+                    
+                    <p><b>Во-вторых, наладь регулярность посещений тобой бега.</b> Начать можно с малого — по первой бегай сам, один, запоминай кнопки, пробуй разные их вариации (подробнее в следующих главах Самоучителя), чтобы быстрее привыкнуть к управлению и начать чувствовать себя увереннее на поле. Для усложнения задачи разложи по полю веточки, камушки, или используй минное поле из мода — создай импровизированную полосу препятствий. Затем подключи к бегу своего приобретенного товарища, будь то сокурсник или наставник, закрепи приобретенные знания на практике. По мере возрастания уверенности зови бегать других ребят, от которых не чувствуешь сильной угрозы, пробуй посещать самостоятельный бег с несколькими участниками.</p>
+
+                    <div class="quote-card">
+                        «Самое главное — не торопись. Твое моральное состояние важнее бега, а весь мир подождет.»
+                    </div>
+                </div>
+            </details>
+
+            <!-- Блок завершения темы и перехода дальше -->
+            <div class="next-footer">
+                <div class="next-text">
+                    <span>Вы изучили: Введение</span>
+                    <strong>Следующая тема: Глава II: Управление и клавиши</strong>
+                </div>
+                <button class="next-btn" onclick="switchChapter(2)">Перейти к Главе II →</button>
+            </div>
+
+        </main>
     </div>
 
-    <!-- Скрипт мгновенного переключения вкладок -->
     <script>
-        function openTab(tabId, btn) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        function switchChapter(chapterNum) {
+            // Подсветка активного пункта в меню слева
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach((item, index) => {
+                item.classList.toggle('active', index + 1 === chapterNum);
+            });
 
-            document.getElementById(tabId).classList.add('active');
-            btn.classList.add('active');
+            // Плавный скролл к началу текста
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if (chapterNum !== 1) {
+                alert(`Переход к Главе ${chapterNum}. Сюда подставим текст следующей главы!`);
+            }
         }
     </script>
 </body>
