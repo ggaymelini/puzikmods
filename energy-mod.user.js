@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Energy mod
 // @namespace    http://tampermonkey.net/
-// @version      6.7
+// @version      5.7
 // @description  Отображение процентов энергии игроков в боережиме
 // @author       Пухляш [cat529464, cat1291946, cat1667922, cat1707976]
 // @match        https://*.catwar.net/cw3*
@@ -9,16 +9,15 @@
 // @grant        GM_addStyle
 // @grant        GM_setValue
 // @grant        GM_getValue
-// @license MIT
 // ==/UserScript==
- 
+
 (function() {
     'use strict';
- 
+
     const GRID_COLS = 10;
     const GRID_ROWS = 6;
     const MAX_CAGES = GRID_COLS * GRID_ROWS;
- 
+
     const DEFAULTS = {
         showEnergy: true,
         darkTheme: false,
@@ -28,22 +27,21 @@
         textColor: '#ffffff',
         iconPos: { x: 20, y: 80 }
     };
- 
+
     function loadSettings() {
         const saved = GM_getValue('puziha_mod_energy_settings', {});
         return { ...DEFAULTS, ...saved };
     }
- 
+
     function saveSettings(settings) {
         GM_setValue('puziha_mod_energy_settings', settings);
     }
- 
+
     const settings = loadSettings();
- 
+
     GM_addStyle(`
         td.cage { position: relative !important; }
- 
-        /* Бейдж энергии: строго по центру клетки */
+
         .lunnaya-energy-display {
             position: absolute;
             bottom: 5px;
@@ -63,23 +61,20 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
             transition: background 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.2s;
         }
- 
-        /* Красный фон при 0% */
+
         .lunnaya-energy-display.is-zero {
             background: #ad001b !important;
             color: #fff !important;
             border-color: #550000 !important;
         }
- 
-        /* Темная тема (если не включены свои цвета) */
+
         .lunnaya-energy-display.is-dark {
             background: rgba(25, 25, 25, 0.92);
             color: #ffffff;
             border: 1px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
         }
- 
-        /* Свечение индикации уровня энергии */
+
         .lunnaya-energy-display.glow-high {
             box-shadow: 0 0 6px 1.5px rgba(76, 175, 80, 0.9) !important;
             border-color: #4CAF50 !important;
@@ -92,8 +87,7 @@
             box-shadow: 0 0 8px 2px rgba(244, 67, 54, 0.95) !important;
             border-color: #F44336 !important;
         }
- 
-        /* Контейнер виджета */
+
         #puziha-widget-container {
             position: fixed;
             z-index: 999999;
@@ -105,16 +99,14 @@
         #puziha-widget-container.flip-left {
             flex-direction: row-reverse;
         }
- 
-        /* Колонка окон (основное + подробнее) */
+
         #puziha-modals-col {
             display: flex;
             flex-direction: column;
             gap: 8px;
             pointer-events: none;
         }
- 
-        /* Иконка с молнией */
+
         #puziha-settings-icon {
             pointer-events: auto;
             width: 36px;
@@ -146,8 +138,7 @@
             height: 19px;
             pointer-events: none;
         }
- 
-        /* Основное окно настроек с блюром */
+
         #puziha-settings-modal {
             pointer-events: auto;
             width: 250px;
@@ -178,8 +169,7 @@
             color: #f5f5f5;
             letter-spacing: 0.3px;
         }
- 
-        /* Ссылка «подробнее» */
+
         .puziha-info-link {
             font-size: 11px;
             color: #ffd700;
@@ -193,7 +183,7 @@
             opacity: 1;
             color: #fff;
         }
- 
+
         .puziha-close-btn {
             background: none;
             border: none;
@@ -205,7 +195,7 @@
             transition: color 0.15s;
         }
         .puziha-close-btn:hover { color: #fff; }
- 
+
         .puziha-row {
             display: flex;
             align-items: center;
@@ -220,8 +210,7 @@
             flex: 1;
             padding-right: 8px;
         }
- 
-        /* Галочка (чекбокс) */
+
         .puziha-checkbox {
             appearance: none;
             -webkit-appearance: none;
@@ -257,8 +246,7 @@
             margin-top: -2px;
             display: block;
         }
- 
-        /* Блок кастомных цветов */
+
         #puziha_colors_container {
             margin-top: 6px;
             padding: 8px;
@@ -312,8 +300,7 @@
         .puziha-color-text:focus {
             border-color: #ffd700;
         }
- 
-        /* Информационное окно под основным окном */
+
         #puziha-info-modal {
             pointer-events: auto;
             width: 250px;
@@ -344,14 +331,14 @@
             font-size: 12px;
         }
     `);
- 
+
     function removeAllEnergyDisplays() {
         const displays = document.querySelectorAll('#cages .lunnaya-energy-display');
         for (let i = 0; i < Math.min(displays.length, MAX_CAGES); i++) {
             displays[i].remove();
         }
     }
- 
+
     function applyCustomStyles(displayEl, percentage) {
         if (percentage === 0) {
             displayEl.style.backgroundColor = '';
@@ -359,7 +346,7 @@
             displayEl.style.borderColor = '';
             return;
         }
- 
+
         if (settings.customColors) {
             displayEl.style.backgroundColor = settings.bgColor;
             displayEl.style.color = settings.textColor;
@@ -370,24 +357,24 @@
             displayEl.style.borderColor = '';
         }
     }
- 
+
     function updateCatEnergy(catSpan) {
         const cage = catSpan.closest('td.cage');
         if (!cage) return;
- 
+
         if (!settings.showEnergy) {
             const el = cage.querySelector('.lunnaya-energy-display');
             if (el) el.remove();
             return;
         }
- 
+
         const arrowEnergyTable = catSpan.querySelector('table:has(.arrow_green, .arrow_red)');
         if (!arrowEnergyTable) {
             const el = cage.querySelector('.lunnaya-energy-display');
             if (el) el.remove();
             return;
         }
- 
+
         const greenArrow = arrowEnergyTable.querySelector('.arrow_green');
         const redArrow = arrowEnergyTable.querySelector('.arrow_red');
         if (!greenArrow || !redArrow) {
@@ -395,27 +382,25 @@
             if (el) el.remove();
             return;
         }
- 
+
         const greenWidth = parseFloat(greenArrow.style.width) || 0;
         const redWidth = parseFloat(redArrow.style.width) || 0;
         const totalWidth = greenWidth + redWidth;
         const percentage = totalWidth > 0 ? Math.round((greenWidth / totalWidth) * 100) : 0;
- 
+
         let displayEl = cage.querySelector('.lunnaya-energy-display');
         if (!displayEl) {
             displayEl = document.createElement('div');
             displayEl.className = 'lunnaya-energy-display';
             cage.appendChild(displayEl);
         }
- 
+
         displayEl.textContent = `${percentage}%`;
- 
-        // 1. Применение темы / кастомных цветов (на 0% всегда красный)
+
         applyCustomStyles(displayEl, percentage);
         displayEl.classList.toggle('is-zero', percentage === 0);
         displayEl.classList.toggle('is-dark', !settings.customColors && !!settings.darkTheme && percentage > 0);
- 
-        // 2. Цветовая индикация свечением
+
         displayEl.classList.remove('glow-high', 'glow-mid', 'glow-low');
         if (settings.glowIndication) {
             if (percentage >= 50) {
@@ -426,9 +411,9 @@
                 displayEl.classList.add('glow-low');
             }
         }
- 
+
         displayEl.style.display = 'block';
- 
+
         if (!arrowEnergyTable.dataset.energyObserved) {
             const observer = new MutationObserver(() => {
                 if (settings.showEnergy) updateCatEnergy(catSpan);
@@ -437,19 +422,19 @@
             arrowEnergyTable.dataset.energyObserved = 'true';
         }
     }
- 
+
     let scanScheduled = false;
     function scheduleScan() {
         if (scanScheduled) return;
         scanScheduled = true;
         requestAnimationFrame(() => {
             scanScheduled = false;
- 
+
             if (!settings.showEnergy) {
                 removeAllEnergyDisplays();
                 return;
             }
- 
+
             const displays = document.querySelectorAll('#cages .lunnaya-energy-display');
             const displaysLimit = Math.min(displays.length, MAX_CAGES);
             for (let i = 0; i < displaysLimit; i++) {
@@ -458,7 +443,7 @@
                 const hasCat = cage && cage.querySelector('span.catWithArrow table:has(.arrow_green, .arrow_red)');
                 if (!hasCat) display.remove();
             }
- 
+
             const catSpans = document.querySelectorAll('#cages tr:nth-child(-n+6) td.cage:nth-child(-n+10) span.catWithArrow');
             const catsLimit = Math.min(catSpans.length, MAX_CAGES);
             for (let i = 0; i < catsLimit; i++) {
@@ -466,13 +451,13 @@
             }
         });
     }
- 
+
     function createDraggableUI() {
         if (document.getElementById('puziha-widget-container') || !document.body) return;
- 
+
         const container = document.createElement('div');
         container.id = 'puziha-widget-container';
- 
+
         const icon = document.createElement('div');
         icon.id = 'puziha-settings-icon';
         icon.title = 'Настройки энергии (зажмите, чтобы перетащить)';
@@ -481,12 +466,10 @@
                 <path d="M11 21h-1l1-7H7.5c-.58 0-.57-.32-.38-.66.19-.34.05-.08.07-.12C8.48 10.94 10.42 7.54 13 3h1l-1 7h3.5c.49 0 .56.33.47.51l-.07.15C12.96 17.55 11 21 11 21z"/>
             </svg>
         `;
- 
-        // Колонка для основного окна и информационного окна под ним
+
         const modalsCol = document.createElement('div');
         modalsCol.id = 'puziha-modals-col';
- 
-        // Основное окно
+
         const modal = document.createElement('div');
         modal.id = 'puziha-settings-modal';
         modal.innerHTML = `
@@ -502,7 +485,7 @@
                 <input type="checkbox" class="puziha-checkbox" id="puziha_energy_toggle" ${settings.showEnergy ? 'checked' : ''}>
             </div>
             <div class="puziha-row">
-                <label for="puziha_glow_toggle">Цветовая индикация энергии:</label>
+                <label for="puziha_glow_toggle">Свечение по уровню энергии:</label>
                 <input type="checkbox" class="puziha-checkbox" id="puziha_glow_toggle" ${settings.glowIndication ? 'checked' : ''}>
             </div>
             <div class="puziha-row">
@@ -513,8 +496,7 @@
                 <label for="puziha_custom_toggle">Свои цвета плашки:</label>
                 <input type="checkbox" class="puziha-checkbox" id="puziha_custom_toggle" ${settings.customColors ? 'checked' : ''}>
             </div>
- 
-            <!-- Блок кастомных цветов -->
+
             <div id="puziha_colors_container" style="${settings.customColors ? '' : 'display: none;'}">
                 <div class="puziha-color-row">
                     <span>Цвет фона:</span>
@@ -531,13 +513,12 @@
                     </div>
                 </div>
             </div>
- 
+
             <div style="font-size: 10px; color: rgba(255,255,255,0.4); text-align: right; margin-top: 8px;">
                 мяу
             </div>
         `;
- 
-        // Информационное окно
+
         const infoModal = document.createElement('div');
         infoModal.id = 'puziha-info-modal';
         infoModal.innerHTML = `
@@ -547,41 +528,41 @@
             </div>
             <div style="color: #ddd;">
                 Мод отображает текущие проценты энергии игрока, добавляет возможность сменить обычную плашку энергии на темную либо настроить удобные для себя кастомные цвета.<br><br>
-                Индикация об уровне энергии через цветовую подсветку:
-                <span style="color: #4CAF50; font-weight: bold;">100-50%</span> зелёная,
-                <span style="color: #FFB300; font-weight: bold;">49-20%</span> оранжевая,
-                <span style="color: #F44336; font-weight: bold;">ниже 20%</span> красная,
+                Индикация об уровне энергии через цветовую подсветку: 
+                <span style="color: #4CAF50; font-weight: bold;">100-50%</span> зелёная, 
+                <span style="color: #FFB300; font-weight: bold;">49-20%</span> оранжевая, 
+                <span style="color: #F44336; font-weight: bold;">ниже 20%</span> красная, 
                 на <span style="color: #ff5252; font-weight: bold;">0%</span> плашка всегда красится в красный.
             </div>
         `;
- 
+
         modalsCol.appendChild(modal);
         modalsCol.appendChild(infoModal);
- 
+
         container.appendChild(icon);
         container.appendChild(modalsCol);
         document.body.appendChild(container);
- 
+
         function applyPosition(x, y) {
             const maxX = window.innerWidth - 45;
             const maxY = window.innerHeight - 45;
             const clampedX = Math.max(5, Math.min(maxX, x));
             const clampedY = Math.max(5, Math.min(maxY, y));
- 
+
             container.style.left = `${clampedX}px`;
             container.style.top = `${clampedY}px`;
- 
+
             const isRightSide = clampedX + 310 > window.innerWidth;
             container.classList.toggle('flip-left', isRightSide);
         }
- 
+
         applyPosition(settings.iconPos.x, settings.iconPos.y);
- 
+
         let isDragging = false;
         let startX, startY;
         let initialX, initialY;
         let moved = false;
- 
+
         icon.addEventListener('mousedown', (e) => {
             if (e.button !== 0) return;
             isDragging = true;
@@ -592,23 +573,23 @@
             initialY = container.offsetTop;
             e.preventDefault();
         });
- 
+
         window.addEventListener('mousemove', (e) => {
             if (!isDragging) return;
             const dx = e.clientX - startX;
             const dy = e.clientY - startY;
- 
+
             if (Math.hypot(dx, dy) > 3) {
                 moved = true;
             }
- 
+
             applyPosition(initialX + dx, initialY + dy);
         });
- 
+
         window.addEventListener('mouseup', () => {
             if (!isDragging) return;
             isDragging = false;
- 
+
             if (moved) {
                 settings.iconPos = { x: container.offsetLeft, y: container.offsetTop };
                 saveSettings(settings);
@@ -621,23 +602,21 @@
                 applyPosition(container.offsetLeft, container.offsetTop);
             }
         });
- 
+
         modal.querySelector('.puziha-close-btn').addEventListener('click', () => {
             modal.style.display = 'none';
             infoModal.style.display = 'none';
         });
- 
-        // Открытие / закрытие информационного окна по кнопке «подробнее»
+
         modal.querySelector('#puziha_info_toggle').addEventListener('click', () => {
             const isInfoOpen = infoModal.style.display === 'block';
             infoModal.style.display = isInfoOpen ? 'none' : 'block';
         });
- 
+
         infoModal.querySelector('#puziha_info_close').addEventListener('click', () => {
             infoModal.style.display = 'none';
         });
- 
-        // 1. Отображение процентов
+
         modal.querySelector('#puziha_energy_toggle').addEventListener('change', (e) => {
             settings.showEnergy = e.target.checked;
             saveSettings(settings);
@@ -647,22 +626,19 @@
                 removeAllEnergyDisplays();
             }
         });
- 
-        // 2. Свечение по уровню энергии
+
         modal.querySelector('#puziha_glow_toggle').addEventListener('change', (e) => {
             settings.glowIndication = e.target.checked;
             saveSettings(settings);
             scheduleScan();
         });
- 
-        // 3. Темная тема
+
         modal.querySelector('#puziha_theme_toggle').addEventListener('change', (e) => {
             settings.darkTheme = e.target.checked;
             saveSettings(settings);
             scheduleScan();
         });
- 
-        // 4. Свои цвета (чекбокс)
+
         const colorsBlock = modal.querySelector('#puziha_colors_container');
         modal.querySelector('#puziha_custom_toggle').addEventListener('change', (e) => {
             settings.customColors = e.target.checked;
@@ -670,20 +646,18 @@
             colorsBlock.style.display = settings.customColors ? 'block' : 'none';
             scheduleScan();
         });
- 
-        // 5. Синхронизация палитры и текстовых полей HEX
+
         function sanitizeHex(val) {
             let str = val.trim();
             if (!str.startsWith('#')) str = '#' + str;
             return /^#[0-9A-Fa-f]{6}$/.test(str) ? str : null;
         }
- 
+
         const bgPick = modal.querySelector('#puziha_bg_pick');
         const bgText = modal.querySelector('#puziha_bg_text');
         const textPick = modal.querySelector('#puziha_text_pick');
         const textText = modal.querySelector('#puziha_text_text');
- 
-        // Фон
+
         bgPick.addEventListener('input', (e) => {
             bgText.value = e.target.value;
             settings.bgColor = e.target.value;
@@ -699,8 +673,7 @@
                 scheduleScan();
             }
         });
- 
-        // Текст
+
         textPick.addEventListener('input', (e) => {
             textText.value = e.target.value;
             settings.textColor = e.target.value;
@@ -717,13 +690,13 @@
             }
         });
     }
- 
+
     let cagesObserver = null;
- 
+
     function setupCagesObserver() {
         const cages = document.getElementById('cages');
         if (!cages || cagesObserver) return;
- 
+
         cagesObserver = new MutationObserver((mutations) => {
             let hasExternalChange = false;
             for (const m of mutations) {
@@ -742,29 +715,29 @@
                 }
                 if (hasExternalChange) break;
             }
- 
+
             if (hasExternalChange) {
                 scheduleScan();
             }
         });
- 
+
         cagesObserver.observe(cages, { childList: true, subtree: true });
         scheduleScan();
     }
- 
+
     function tryInit() {
         createDraggableUI();
         if (document.getElementById('cages')) {
             setupCagesObserver();
         }
     }
- 
+
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', tryInit);
     } else {
         tryInit();
     }
- 
+
     if (!document.getElementById('cages')) {
         const initObserver = new MutationObserver(() => {
             createDraggableUI();
