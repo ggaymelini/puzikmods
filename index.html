@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy mod — CatWar</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%23ffd700%22><path d=%22M11 21h-1l1-7H7.5c-.58 0-.57-.32-.38-.66.19-.34.05-.08.07-.12C8.48 10.94 10.42 7.54 13 3h1l-1 7h3.5c.49 0 .56.33.47.51l-.07.15C12.96 17.55 11 21 11 21z%22/></svg>">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at top, #232820 0%, #11130f 100%);
+            color: #ececec;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .card {
+            background: rgba(35, 38, 28, 0.72);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 16px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+            max-width: 520px;
+            width: 100%;
+            padding: 28px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            padding-bottom: 16px;
+            margin-bottom: 20px;
+        }
+
+        .icon {
+            width: 42px;
+            height: 42px;
+            background: rgba(255, 220, 50, 0.15);
+            border: 1px solid rgba(255, 220, 50, 0.4);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffd700;
+        }
+
+        .icon svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .title-block h1 {
+            font-size: 20px;
+            color: #fff;
+            letter-spacing: 0.4px;
+        }
+
+        .title-block p {
+            font-size: 12px;
+            color: #aaa;
+            margin-top: 3px;
+        }
+
+        .description {
+            font-size: 13.5px;
+            line-height: 1.55;
+            color: #ddd;
+            margin-bottom: 22px;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #ffd700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        /* Демонстрация плашек */
+        .preview-box {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 22px;
+        }
+
+        .badge-demo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .badge-demo span {
+            font-size: 11px;
+            color: #888;
+        }
+
+        .badge {
+            background: rgba(25, 25, 25, 0.95);
+            color: #fff;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 2px 7px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            user-select: none;
+        }
+
+        .badge.green {
+            box-shadow: 0 0 6px 1.5px rgba(76, 175, 80, 0.9);
+            border-color: #4CAF50;
+        }
+
+        .badge.orange {
+            box-shadow: 0 0 6px 1.5px rgba(255, 179, 0, 0.9);
+            border-color: #FFB300;
+        }
+
+        .badge.red {
+            box-shadow: 0 0 8px 2px rgba(244, 67, 54, 0.95);
+            border-color: #F44336;
+        }
+
+        .badge.zero {
+            background: #ad001b;
+            color: #fff;
+            border-color: #550000;
+        }
+
+        /* Список фич */
+        .features-list {
+            list-style: none;
+            margin-bottom: 24px;
+        }
+
+        .features-list li {
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 8px;
+            color: #ccc;
+            padding-left: 18px;
+            position: relative;
+        }
+
+        .features-list li::before {
+            content: "•";
+            color: #ffd700;
+            position: absolute;
+            left: 4px;
+            font-size: 16px;
+        }
+
+        /* Кнопка установки */
+        .install-btn {
+            display: block;
+            width: 100%;
+            text-align: center;
+            background: #4CAF50;
+            color: #fff;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.35);
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .install-btn:hover {
+            background: #43a047;
+            transform: translateY(-1px);
+        }
+
+        .install-btn:active {
+            transform: translateY(0);
+        }
+
+        .footer {
+            margin-top: 14px;
+            text-align: center;
+            font-size: 11px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="header">
+            <div class="icon">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M11 21h-1l1-7H7.5c-.58 0-.57-.32-.38-.66.19-.34.05-.08.07-.12C8.48 10.94 10.42 7.54 13 3h1l-1 7h3.5c.49 0 .56.33.47.51l-.07.15C12.96 17.55 11 21 11 21z"/>
+                </svg>
+            </div>
+            <div class="title-block">
+                <h1>Energy mod</h1>
+                <p>Автор: Пухляш</p>
+            </div>
+        </div>
+
+        <div class="description">
+            Мод для боережима <b>CatWar (cw3)</b>. Отображает текущие проценты энергии игроков по центру клетки и позволяет настроить визуал под себя.
+        </div>
+
+        <div class="section-title">Индикация свечением</div>
+        <div class="preview-box">
+            <div class="badge-demo">
+                <div class="badge green">100%</div>
+                <span>100–50%</span>
+            </div>
+            <div class="badge-demo">
+                <div class="badge orange">45%</div>
+                <span>49–20%</span>
+            </div>
+            <div class="badge-demo">
+                <div class="badge red">15%</div>
+                <span>&lt; 20%</span>
+            </div>
+            <div class="badge-demo">
+                <div class="badge zero">0%</div>
+                <span>0% (крит)</span>
+            </div>
+        </div>
+
+        <div class="section-title">Возможности</div>
+        <ul class="features-list">
+            <li><b>Плавающая кнопка:</b> перетаскивается мышкой в любую точку экрана.</li>
+            <li><b>Темы оформления:</b> светлая, темная или свои цвета через палитру и HEX-коды.</li>
+            <li><b>Оптимизация:</b> строгое ограничение полем 10×6, 0% задержек и лагов.</li>
+        </ul>
+
+        <!-- Ссылка на скрипт -->
+        <a href="energy-mod.user.js" class="install-btn">Установить скрипт</a>
+
+        <div class="footer">
+            Для работы требуется расширение Tampermonkey или Violentmonkey • мяу
+        </div>
+    </div>
+
+</body>
+</html>
